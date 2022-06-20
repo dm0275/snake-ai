@@ -1,9 +1,11 @@
+import os.path
+
 import torch
 import random
 import numpy as np
 from collections import deque
 from snake_game_ai import SnakeGameAI, Direction, Point
-from model import Linear_QNet, QTrainer
+from model import Linear_QNet, QTrainer, MODEL_DIR, MODEL_FILE
 from helper import plot
 
 MAX_MEMORY = 100_000
@@ -103,6 +105,13 @@ def train():
     record = 0
     agent = Agent()
     game = SnakeGameAI()
+
+    model_data = os.path.join(MODEL_DIR, MODEL_FILE)
+    if os.path.exists(model_data):
+        print('Loading exiting model data')
+        checkpoint = torch.load(model_data)
+        agent.model.load_state_dict(checkpoint, strict=False)
+        agent.model.eval()
 
     while True:
         # get the old state
